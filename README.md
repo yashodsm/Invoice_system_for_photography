@@ -27,3 +27,11 @@ git clone https://github.com/yashodsm/Invoice_system_for_photography
 cd Invoice_system_for_photography
 
 
+### 2. Install Dependencies
+Create a virtual environment (optional):
+
+bash
+Copy
+Edit
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
