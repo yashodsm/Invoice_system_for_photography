@@ -2,7 +2,6 @@
 
 A sleek, minimal web-based invoice management system for photographers. Easily create, manage, and email professional invoices for your clients. Built using Flask, SQLite, and Bootstrap 5.
 
-![Invoice UI Screenshot](screenshot.png) <!-- Optional image preview -->
 
 ---
 
