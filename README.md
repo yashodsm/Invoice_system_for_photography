@@ -66,7 +66,7 @@ python app.py
 
 http://127.0.0.1:5000
 
-🧠 Tech Stack
+### 🧠 Tech Stack
 Backend: Flask (Python)
 
 Database: SQLite (auto-created)
@@ -75,7 +75,8 @@ Frontend: HTML, Bootstrap 5
 
 Email: Flask-Mail (SMTP)
 
-📂 Project Structure
+
+### 📂 Project Structure
 
 invoice-manager/
 ├── app.py
@@ -88,7 +89,7 @@ invoice-manager/
 └── requirements.txt      # Python dependencies
 
 
-👨‍💻 Created By
+### 👨‍💻 Created By
 Photography Tools
 Built with ❤️ by Yashod
 
