@@ -77,7 +77,7 @@ Email: Flask-Mail (SMTP)
 
 
 ### 📂 Project Structure
-
+``` bash
 invoice-manager/
 ├── app.py
 ├── invoices.db           # Auto-created SQLite database
@@ -87,7 +87,7 @@ invoice-manager/
 ├── static/               # Optional for CSS/JS/assets
 ├── README.md
 └── requirements.txt      # Python dependencies
-
+```
 
 ### 👨‍💻 Created By
 Photography Tools
