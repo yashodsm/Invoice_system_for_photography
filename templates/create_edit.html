@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ 'Edit Invoice' if invoice else 'Create Invoice' }} - Click That Photography</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Your CSS here (same as you provided) */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .invoice-box {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            font-size: 14px;
+            line-height: 24px;
+            color: #555;
+            background: #fff;
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .invoice-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin: 0;
+        }
+        .invoice-header .contact-info {
+            text-align: right;
+            font-size: 12px;
+            line-height: 18px;
+        }
+        .invoice-details, .client-details, .invoice-summary {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #eee; /* Light border for sections */
+        }
+        .invoice-details div, .client-details div {
+            margin-bottom: 10px;
+        }
+        .line-item-header {
+            font-weight: bold;
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            text-align: center;
+        }
+        .line-item-header div, .line-item-row .input-group > * {
+            flex: 1;
+            padding: 0 5px;
+            box-sizing: border-box;
+        }
+        .line-item-header .desc-col { flex: 4; text-align: left; }
+        .line-item-header .qty-col { flex: 1; }
+        .line-item-header .price-col { flex: 2; }
+        .line-item-header .total-col { flex: 2; }
+        .line-item-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            border-bottom: 1px dotted #eee;
+            padding-bottom: 5px;
+        }
+        .line-item-row:last-of-type {
+            border-bottom: none;
+        }
+        .line-item-row .form-control {
+            border-right: none;
+            border-left: none;
+            border-top: none;
+            border-bottom: 1px solid #ddd;
+            border-radius: 0;
+            padding: 0.375rem 0.75rem; /* Match default Bootstrap input padding */
+        }
+        .line-item-row .form-control:focus {
+            box-shadow: none;
+            border-color: #86b7fe;
+        }
+        .line-item-row .btn-remove {
+            flex: 0 0 auto; /* Don't grow, don't shrink, auto basis */
+            width: 40px; /* Fixed width for remove button */
+            margin-left: 5px;
+        }
+        .line-item-row .line-total {
+            text-align: right;
+            font-weight: bold;
+            flex: 2;
+            padding-right: 15px; /* Spacing from remove button */
+        }
+        .invoice-summary .row {
+            margin-bottom: 5px;
+        }
+        .invoice-summary .label {
+            text-align: right;
+            font-weight: bold;
+            padding-right: 15px;
+        }
+        .invoice-summary .value {
+            text-align: right;
+            padding-right: 15px;
+        }
+        .total-grand {
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .form-actions {
+            margin-top: 30px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="invoice-box">
+        <form method="post" id="invoiceForm">
+            <div class="invoice-header">
+                <div>
+                    <h1>ClickThatPhotography</h1>
+                    </div>
+                <div class="contact-info">
+                    <p>123 Photography Lane, Shutter City, VIC 3000</p>
+                    <p>info@clickthatphotography.com</p>
+                    <p>(03) 1234 5678</p>
+                    <p>www.clickthatphotography.com</p>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4>Bill To:</h4>
+                    <div class="mb-2">
+                        <label class="form-label visually-hidden">Client Name</label>
+                        <input name="client_name" class="form-control" placeholder="Client Name" required value="{{ invoice['client_name'] if invoice else '' }}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label visually-hidden">Client Email</label>
+                        <input name="email" type="email" class="form-control" placeholder="Client Email" required value="{{ invoice['email'] if invoice else '' }}">
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h4>Invoice Details:</h4>
+                    <div class="mb-2 d-flex justify-content-end align-items-center">
+                        <label class="form-label mb-0 me-2">Invoice #:</label>
+                        <input name="invoice_number" type="text" class="form-control w-auto" placeholder="INV-001" value="{{ invoice['invoice_number'] if invoice else '' }}">
+                    </div>
+                    <div class="mb-2 d-flex justify-content-end align-items-center">
+                        <label class="form-label mb-0 me-2">Invoice Date:</label>
+                        <input name="invoice_date" type="date" class="form-control w-auto" value="{{ invoice['invoice_date'] if invoice else (today_date if not invoice else '') }}">
+                    </div>
+                    <div class="mb-2 d-flex justify-content-end align-items-center">
+                        <label class="form-label mb-0 me-2">Due Date:</label>
+                        <input name="due_date" type="date" class="form-control w-auto" value="{{ invoice['due_date'] if invoice else '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="mb-3">Services Rendered:</h4>
+            <div class="line-item-header">
+                <div class="desc-col">Description</div>
+                <div class="qty-col">Qty</div>
+                <div class="price-col">Price</div>
+                <div class="total-col">Total</div>
+                <div style="width: 40px;"></div> </div>
+            <div id="lineItemsContainer" class="mb-3">
+                {% if invoice %}
+                    {% for item in line_items %}
+                        <div class="input-group line-item-row">
+                            <input name="description[]" type="text" placeholder="Description" class="form-control desc-col" required value="{{ item['description'] }}">
+                            <input name="quantity[]" type="number" step="1" min="1" placeholder="1" class="form-control qty-col" required value="{{ item['quantity'] }}">
+                            <input name="price[]" type="number" step="0.01" placeholder="0.00" class="form-control price-col" required value="{{ item['price'] }}">
+                            <div class="line-total total-col">$0.00</div>
+                            <button type="button" class="btn btn-sm btn-danger btn-remove">X</button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="input-group line-item-row">
+                        <input name="description[]" type="text" placeholder="Description" class="form-control desc-col" required>
+                        <input name="quantity[]" type="number" step="1" min="1" placeholder="1" class="form-control qty-col" required value="1">
+                        <input name="price[]" type="number" step="0.01" placeholder="0.00" class="form-control price-col" required>
+                        <div class="line-total total-col">$0.00</div>
+                        <button type="button" class="btn btn-sm btn-danger btn-remove">X</button>
+                    </div>
+                {% endif %}
+            </div>
+            <button type="button" class="btn btn-secondary mb-4" id="addLineItemBtn">+ Add Line Item</button>
+
+            <div class="row invoice-summary">
+                <div class="col-md-6 offset-md-6">
+                    <div class="row">
+                        <div class="col-6 label">Subtotal:</div>
+                        <div class="col-6 value"><span id="subtotalDisplay">$0.00</span></div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-6 label">Tax Rate (%):</div>
+                        <div class="col-6 value d-flex justify-content-end">
+                            <input name="tax_rate" type="number" step="0.01" min="0" class="form-control w-auto text-end" id="taxRateInput" value="{{ invoice['tax_rate'] if invoice else '10.00' }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 label">Tax Amount:</div>
+                        <div class="col-6 value"><span id="taxAmountDisplay">$0.00</span></div>
+                    </div>
+                    <div class="row total-grand">
+                        <div class="col-6 label">Grand Total:</div>
+                        <div class="col-6 value"><span id="grandTotalDisplay">$0.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Event Date(s)</label>
+                <input name="event_date" type="text" class="form-control" placeholder="e.g. 2025-07-15 or Multiple dates" value="{{ invoice['event_date'] if invoice else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Album/Link</label>
+                <input name="link" type="url" class="form-control" placeholder="Link to photo album or gallery" value="{{ invoice['link'] if invoice else '' }}">
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-success">{{ 'Update Invoice' if invoice else 'Save Invoice' }}</button>
+                <a href="{{ url_for('home') }}" class="btn btn-secondary ms-2">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const lineItemsContainer = document.getElementById('lineItemsContainer');
+        const addLineItemBtn = document.getElementById('addLineItemBtn');
+        const taxRateInput = document.getElementById('taxRateInput');
+
+        // Get today's date for default invoice date
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months start at 0!
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayDate = `${yyyy}-${mm}-${dd}`;
+
+        // Set default invoice date if creating a new invoice
+        const invoiceDateInput = document.querySelector('input[name="invoice_date"]');
+        if (!invoiceDateInput.value) {
+            invoiceDateInput.value = todayDate;
+        }
+
+
+        function attachRemoveListeners() {
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.onclick = (e) => {
+                    if (lineItemsContainer.children.length > 1) { // Ensure at least one line item remains
+                        e.target.closest('.line-item-row').remove();
+                        calculateTotals();
+                    } else {
+                        alert("You must have at least one line item.");
+                    }
+                };
+            });
+        }
+
+        function calculateLineItemTotal(row) {
+            const quantityInput = row.querySelector('input[name="quantity[]"]');
+            const priceInput = row.querySelector('input[name="price[]"]');
+            const lineTotalDisplay = row.querySelector('.line-total');
+
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = quantity * price;
+
+            lineTotalDisplay.textContent = `$${total.toFixed(2)}`;
+            return total;
+        }
+
+        function calculateTotals() {
+            let subtotal = 0;
+            document.querySelectorAll('.line-item-row').forEach(row => {
+                subtotal += calculateLineItemTotal(row);
+            });
+
+            const taxRate = parseFloat(taxRateInput.value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const grandTotal = subtotal + taxAmount;
+
+            document.getElementById('subtotalDisplay').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('taxAmountDisplay').textContent = `$${taxAmount.toFixed(2)}`;
+            document.getElementById('grandTotalDisplay').textContent = `$${grandTotal.toFixed(2)}`;
+        }
+
+        function attachInputListeners() {
+            document.querySelectorAll('.line-item-row input[name="quantity[]"], .line-item-row input[name="price[]"]').forEach(input => {
+                input.oninput = calculateTotals;
+            });
+            taxRateInput.oninput = calculateTotals;
+        }
+
+        addLineItemBtn.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.className = 'input-group line-item-row';
+            div.innerHTML = `
+                <input name="description[]" type="text" placeholder="Description" class="form-control desc-col" required>
+                <input name="quantity[]" type="number" step="1" min="1" placeholder="1" class="form-control qty-col" required value="1">
+                <input name="price[]" type="number" step="0.01" placeholder="0.00" class="form-control price-col" required>
+                <div class="line-total total-col">$0.00</div>
+                <button type="button" class="btn btn-sm btn-danger btn-remove">X</button>
+            `;
+            lineItemsContainer.appendChild(div);
+            attachRemoveListeners();
+            attachInputListeners(); // Re-attach listeners to new inputs
+            calculateTotals(); // Recalculate after adding new row
+        });
+
+        // Initial setup
+        attachRemoveListeners();
+        attachInputListeners();
+        calculateTotals(); // Calculate totals on page load, especially for existing invoices
+    });
+</script>
+</body>
+</html>

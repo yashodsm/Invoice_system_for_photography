@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Invoices - Click That Photography</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <h1 class="mb-4">Invoices</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <a href="{{ url_for('create_edit') }}" class="btn btn-primary mb-3">+ Create New Invoice</a>
+
+    {% if invoices %}
+    <table class="table table-bordered bg-white">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Client Name</th>
+                <th>Invoice #</th>
+                <th>Invoice Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for inv in invoices %}
+            <tr>
+                <td>{{ inv['id'] }}</td>
+                <td>{{ inv['client_name'] }}</td>
+                <td>{{ inv['invoice_number'] }}</td>
+                <td>{{ inv['invoice_date'] }}</td>
+                <td>{{ inv['due_date'] }}</td>
+                <td>{{ inv['status'] }}</td>
+                <td>
+                    <a href="{{ url_for('create_edit', id=inv['id']) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{{ url_for('email_invoice', id=inv['id']) }}" class="btn btn-sm btn-info">Email</a>
+                    <form action="{{ url_for('delete_invoice', id=inv['id']) }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No invoices found.</p>
+    {% endif %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
